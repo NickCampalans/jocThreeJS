@@ -15,56 +15,42 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-/*
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 });
-const cube = new THREE.Mesh( geometry, material );
-scene.add(cube);
-*/
+var light;
+var angle = 0;
 
-const loader = new GLTFLoader().setPath( 'assets/gltf/' );
-loader.load ('bunny_gltf.gltf', function (gltf) {
-  console.log("Scene Add");
-  
-  scene.add(gltf.scene);
-}, undefined, function (error) {
-  console.log( error );
-});
-
-/*var cube = undefined;
-var mtlLoader = new MTLLoader();
-mtlLoader.load('assets/obj/bunny_obj.mtl', function(materials) {
-  materials.preload();
-  console.log(materials);
-  
-  var loader = new OBJLoader();
-  loader.setMaterials(materials);
-  loader.load('assets/obj/bunny_obj.obj', function(object) {
-    cube = object;
-    scene.add(cube);
-  }, function(xhr) {
-    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-  }, function(error) {
-    console.log('An error happened');
-  });
-});*/
-
-const light = new THREE.PointLight( 0xff0000, 1, 100 );
-light.position.set( 0, 10, 4 );
-scene.add( light );
-
-const light2 = new THREE.AmbientLight(0xffffff);
-scene.add( light2 );
+LoadModel();
+SetLights();
 
 renderer.setClearColor(0xffffff, 1);
 renderer.clear();
 camera.position.z = 10;
 camera.position.y = 4;
 function animate(){
-  //cube.rotation.x += 0.01;
-  //cube.rotation.y += 0.01;
-  scene.rotateY(0.01);
+  light.position.x =2+7*Math.sin(angle) * 0.3;
+  light.position.y =2+7*Math.cos(angle) * 0.3;
+  angle += 0.02;
+  scene.rotateY(0.00);
   renderer.render(scene, camera);
 }
 
 renderer.setAnimationLoop( animate );
+
+function LoadModel() {
+  const loader = new GLTFLoader().setPath( 'assets/gltf/bunny/' );
+  loader.load ('bunny_gltf.glb', function (gltf) {
+    console.log("Scene Add");
+    
+    scene.add(gltf.scene);
+  }, undefined, function (error) {
+    console.log( error );
+  });
+}
+
+function SetLights() {
+  light = new THREE.PointLight( 0xff0000, 1, 100 );
+  light.position.set( 5, 0, 2 );
+  scene.add( light );
+
+  const lightAmbient = new THREE.AmbientLight(0x666666);
+  scene.add( lightAmbient );
+}
