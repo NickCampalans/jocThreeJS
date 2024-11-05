@@ -53,7 +53,7 @@ const light = new THREE.PointLight( 0xff0000, 1, 100 );
 light.position.set( 0, 10, 4 );
 scene.add( light );
 
-const light2 = new THREE.AmbientLight(0xf0f0f0);
+const light2 = new THREE.AmbientLight(0xffffff);
 scene.add( light2 );
 
 renderer.setClearColor(0xffffff, 1);
