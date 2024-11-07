@@ -22,6 +22,15 @@ controls.target.set(0, 1, 0)
 var light;
 var angle = 0;
 
+const planeGeometry = new THREE.PlaneGeometry(25, 25)
+const texture = new THREE.TextureLoader().load('img/grid.png')
+const plane = new THREE.Mesh(
+    planeGeometry,
+    new THREE.MeshBasicMaterial({ color: 0x888888 })
+)
+plane.rotateX(-Math.PI / 2)
+plane.receiveShadow = true
+scene.add(plane)
 LoadModel();
 SetLights();
 
@@ -35,6 +44,7 @@ const clock = new THREE.Clock();
 const gui = new GUI()
 const animationsFolder = gui.addFolder('Animations')
 animationsFolder.open();
+
 function animate(){
   if (modelReady) mixer.update(clock.getDelta())
   light.position.x =2+7*Math.sin(angle) * 0.3;
@@ -61,8 +71,6 @@ function onWindowResize() {
 }
 
 const setAction = (toAction) => {
-  console.log("setAction");
-  
   if (toAction != activeAction) {
     lastAction = activeAction
     activeAction = toAction
@@ -70,27 +78,21 @@ const setAction = (toAction) => {
     lastAction.fadeOut(1)
     activeAction.reset()
     activeAction.fadeIn(1)
-    activeAction.play()
-    console.log("ActiveAction: ", activeAction);
-    
+    activeAction.play() 
   }
 }
 
 function LoadModel() {
   const loader = new GLTFLoader().setPath( 'assets/gltf/rogue/' );
   loader.load ('Rogue_Hooded.glb', function (gltf) {
-    //console.log("Scene Add");
     var bbox = new THREE.Box3().setFromObject(gltf.scene);
-    //console.log("BBox: ", bbox);
     var centerX = (bbox.max.x + bbox.min.x) / 2;
     var centerY = (bbox.max.y + bbox.min.y) / 2;
     var centerZ = (bbox.max.z + bbox.min.z) / 2;
-    //console.log(`Center: ${centerX}, ${centerY}, ${centerZ}`);
 
     var sizeX = bbox.max.x - bbox.min.x;
     var sizeY = bbox.max.y - bbox.min.y;
     var sizeZ = bbox.max.z - bbox.min.z;
-    //console.log(`Size:  ${sizeX}, ${sizeY}, ${sizeZ}`);
     
     camera.position.x = centerX;
     camera.position.y = centerY + 2 * sizeY;
