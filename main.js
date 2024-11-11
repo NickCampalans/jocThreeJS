@@ -19,18 +19,18 @@ const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 controls.target.set(0, 1, 0)
 
-var light;
 var angle = 0;
 
 const planeGeometry = new THREE.PlaneGeometry(25, 25)
-const texture = new THREE.TextureLoader().load('img/grid.png')
+//const texture = new THREE.TextureLoader().load('img/grid.png')
 const plane = new THREE.Mesh(
     planeGeometry,
     new THREE.MeshBasicMaterial({ color: 0x888888 })
 )
 plane.rotateX(-Math.PI / 2)
-plane.receiveShadow = true
+//plane.receiveShadow = true
 scene.add(plane)
+
 LoadModel();
 SetLights();
 
@@ -38,8 +38,8 @@ var animations = {};
 
 renderer.setClearColor(0xffffff, 1);
 renderer.clear();
-camera.position.z = 10;
-camera.position.y = 4;
+//camera.position.z = 10;
+//camera.position.y = 4;
 const clock = new THREE.Clock();
 const gui = new GUI()
 const animationsFolder = gui.addFolder('Animations')
@@ -47,8 +47,6 @@ animationsFolder.open();
 
 function animate(){
   if (modelReady) mixer.update(clock.getDelta())
-  light.position.x =2+7*Math.sin(angle) * 0.3;
-  light.position.y =2+7*Math.cos(angle) * 0.3;
   angle += 0.02;
   scene.rotateY(0.0);
   controls.update();
@@ -67,7 +65,7 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
-  animate();
+  //animate();
 }
 
 const setAction = (toAction) => {
@@ -82,9 +80,10 @@ const setAction = (toAction) => {
   }
 }
 
+
 function LoadModel() {
   const loader = new GLTFLoader().setPath( 'assets/gltf/rogue/' );
-  loader.load ('Rogue_Hooded.glb', function (gltf) {
+  loader.load ('Rogue.glb', function (gltf) {
     var bbox = new THREE.Box3().setFromObject(gltf.scene);
     var centerX = (bbox.max.x + bbox.min.x) / 2;
     var centerY = (bbox.max.y + bbox.min.y) / 2;
@@ -117,8 +116,11 @@ function LoadModel() {
       animationActions.push(animationAction);
     }
 
-    activeAction = animationActions[73]
-    activeAction.play();
+    if(gltf.animations.length > 0) {
+      activeAction = animationActions[0]
+      activeAction.play();
+    }
+
     modelReady = true;
     
     scene.add(gltf.scene);
@@ -128,9 +130,6 @@ function LoadModel() {
 }
 
 function SetLights() {
-  light = new THREE.PointLight( 0xff0000, 1, 100 );
-  light.position.set( 5, 0, 2 );
-
   const lightAmbient = new THREE.AmbientLight(0xffffff);
   scene.add( lightAmbient );
 }
