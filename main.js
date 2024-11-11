@@ -44,6 +44,8 @@ const clock = new THREE.Clock();
 const gui = new GUI()
 const animationsFolder = gui.addFolder('Animations')
 animationsFolder.open();
+console.log("Hola");
+
 
 function animate(){
   if (modelReady) mixer.update(clock.getDelta())
