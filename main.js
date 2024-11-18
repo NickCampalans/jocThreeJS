@@ -11,7 +11,7 @@ const camera = new THREE.PerspectiveCamera(
 0.1,
 1000 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({logarithmicDepthBuffer: true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -21,17 +21,18 @@ controls.target.set(0, 1, 0)
 
 var angle = 0;
 
-const planeGeometry = new THREE.PlaneGeometry(25, 25)
+//const planeGeometry = new THREE.PlaneGeometry(25, 25)
 //const texture = new THREE.TextureLoader().load('img/grid.png')
-const plane = new THREE.Mesh(
+/*const plane = new THREE.Mesh(
     planeGeometry,
     new THREE.MeshBasicMaterial({ color: 0x888888 })
 )
 plane.rotateX(-Math.PI / 2)
 //plane.receiveShadow = true
-scene.add(plane)
+scene.add(plane)*/
 
-LoadModel();
+LoadLevel();
+LoadChar();
 SetLights();
 
 var animations = {};
@@ -82,25 +83,9 @@ const setAction = (toAction) => {
   }
 }
 
-
-function LoadModel() {
+function LoadChar() {
   const loader = new GLTFLoader().setPath( 'assets/gltf/rogue/' );
   loader.load ('Rogue.glb', function (gltf) {
-    var bbox = new THREE.Box3().setFromObject(gltf.scene);
-    var centerX = (bbox.max.x + bbox.min.x) / 2;
-    var centerY = (bbox.max.y + bbox.min.y) / 2;
-    var centerZ = (bbox.max.z + bbox.min.z) / 2;
-
-    var sizeX = bbox.max.x - bbox.min.x;
-    var sizeY = bbox.max.y - bbox.min.y;
-    var sizeZ = bbox.max.z - bbox.min.z;
-    
-    camera.position.x = centerX;
-    camera.position.y = centerY + 2 * sizeY;
-    camera.position.z = centerZ + sizeZ * 5;
-    camera.lookAt(new THREE.Vector3(centerX, centerY, centerZ));
-    controls.target.set(centerX, centerY, centerZ);
-    
     mixer = new THREE.AnimationMixer(gltf.scene);
     var animationAction;
     
@@ -124,6 +109,30 @@ function LoadModel() {
     }
 
     modelReady = true;
+    
+    scene.add(gltf.scene);
+  }, undefined, function (error) {
+    console.log( error );
+  });
+}
+
+function LoadLevel() {
+  const loader = new GLTFLoader().setPath( 'assets/gltf/EscenaCofre/' );
+  loader.load ('EscenaCofre.gltf', function (gltf) {
+    var bbox = new THREE.Box3().setFromObject(gltf.scene);
+    var centerX = (bbox.max.x + bbox.min.x) / 2;
+    var centerY = (bbox.max.y + bbox.min.y) / 2;
+    var centerZ = (bbox.max.z + bbox.min.z) / 2;
+
+    var sizeX = bbox.max.x - bbox.min.x;
+    var sizeY = bbox.max.y - bbox.min.y;
+    var sizeZ = bbox.max.z - bbox.min.z;
+    
+    camera.position.x = centerX;
+    camera.position.y = centerY + 2 * sizeY;
+    camera.position.z = centerZ + sizeZ * 5;
+    camera.lookAt(new THREE.Vector3(centerX, centerY, centerZ));
+    controls.target.set(centerX, centerY, centerZ);
     
     scene.add(gltf.scene);
   }, undefined, function (error) {
